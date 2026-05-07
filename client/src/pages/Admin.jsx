@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = "http://localhost:5000";
+
 function Admin() {
 
   const [form, setForm] = useState({
@@ -13,13 +15,20 @@ function Admin() {
 
   const [products, setProducts] = useState([]);
 
+  const user =
+    JSON.parse(
+      localStorage.getItem("user")
+    );
+
+  const token = user?.token;
+
 
   const fetchProducts = async () => {
 
     try {
 
       const response = await axios.get(
-        "http://localhost:5000/api/products"
+        `${API_URL}/api/products`
       );
 
       setProducts(response.data);
@@ -39,20 +48,28 @@ function Admin() {
 
     setForm({
       ...form,
-      [e.target.name]: e.target.value
+      [e.target.name]:
+        e.target.value
     });
   };
 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit =
+    async (e) => {
 
     e.preventDefault();
 
     try {
 
       await axios.post(
-        "http://localhost:5000/api/products/add",
-        form
+        `${API_URL}/api/products/add`,
+        form,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        }
       );
 
       alert("Product Added");
@@ -68,17 +85,27 @@ function Admin() {
       });
 
     } catch (error) {
-      console.log(error);
+
+      alert(
+        error.response?.data?.message
+      );
     }
   };
 
 
-  const deleteProduct = async (id) => {
+  const deleteProduct =
+    async (id) => {
 
     try {
 
       await axios.delete(
-        `http://localhost:5000/api/products/${id}`
+        `${API_URL}/api/products/${id}`,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        }
       );
 
       alert("Product Deleted");
@@ -86,7 +113,10 @@ function Admin() {
       fetchProducts();
 
     } catch (error) {
-      console.log(error);
+
+      alert(
+        error.response?.data?.message
+      );
     }
   };
 
@@ -109,6 +139,7 @@ function Admin() {
 
 
       {/* Add Product Form */}
+
       <form
         onSubmit={handleSubmit}
         className="
@@ -209,7 +240,8 @@ function Admin() {
       </form>
 
 
-      {/* Product List */}
+      {/* Products */}
+
       <div className="
         grid
         grid-cols-1
@@ -257,7 +289,9 @@ function Admin() {
 
               <button
                 onClick={() =>
-                  deleteProduct(product._id)
+                  deleteProduct(
+                    product._id
+                  )
                 }
                 className="
                   mt-5
