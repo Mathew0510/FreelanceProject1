@@ -14,7 +14,7 @@ import {
 } from "../context/AuthContext";
 
 const API_URL =
-  "http://localhost:5000";
+  "https://freelanceproject1.onrender.com";
 
 function Login() {
 
