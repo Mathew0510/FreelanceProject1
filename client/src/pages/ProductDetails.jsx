@@ -12,7 +12,7 @@ function ProductDetails() {
     try {
 
       const response = await axios.get(
-        ``https://freelanceproject1.onrender.com/api/products/${id}``
+        `https://freelanceproject1.onrender.com/api/products/${id}`
       );
 
       setProduct(response.data);
